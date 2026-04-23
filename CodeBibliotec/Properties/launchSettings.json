@@ -1,0 +1,35 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+
+        //aqui trocamos de false para true para conseguir abrir no browser:
+        "launchBrowser": true,
+
+        //aqui nos digitamos oque nos queremos abrir no navegador o "swagger":
+        "launchUrl": "swagger",
+
+        "applicationUrl": "http://localhost:5004",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+        }
+    },
+    "https": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+
+        //aqui trocamos de false para true para conseguir abrir no browser:
+        "launchBrowser": true,
+
+        //aqui nos digitamos oque nos queremos abrir no navegador o "swagger":
+        "launchUrl": "swagger",
+
+        "applicationUrl": "https://localhost:7286;http://localhost:5004",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+        }
+    }
+  }
+}
