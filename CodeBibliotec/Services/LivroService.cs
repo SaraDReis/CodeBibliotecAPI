@@ -20,14 +20,54 @@ namespace CodeBibliotec.Services
 
 
 
-        public Task<bool> AtualizarLivrosAsync(int id, LivroViewModel livroViewModel)
+        public async Task<bool> AtualizarLivrosAsync(int id, LivroViewModel livroViewModel)
         {
-            throw new NotImplementedException();
+            var livro = new Livro
+            {
+                Id = id,
+                Titulo = livroViewModel.Titulo,
+                Autor = livroViewModel.Autor,
+                AnoPublicacao = livroViewModel.anoPublicacao,
+
+                Status = string.IsNullOrWhiteSpace(livroViewModel.Status)
+                  //if ternário
+                  ? "Disponível"
+                  : livroViewModel.Status.Trim()
+            };
+            if(livroViewModel.CategoriaIds != null)
+            {
+                livro.IdCategoria = livroViewModel.CategoriaIds
+                    .Select(id => new Categorium { Id = id, Nome = string.Empty }).ToList(); //Nome = string.Empty: nome é uma palavra e está vazio
+            }
+            return await _livroRepository.AtualizarLivrosAsync(id, livro);
         }
 
-        public Task<Livro> CadastrarLivrosAsync(LivroViewModel livroViewModel)
+        public async Task<LivroResponseDto> CadastrarLivrosAsync(LivroViewModel livroViewModel)
         {
-            throw new NotImplementedException();
+            var livro = new Livro
+            {
+                Titulo = livroViewModel.Titulo,
+                Autor = livroViewModel.Autor,
+                AnoPublicacao = livroViewModel.anoPublicacao,
+
+                Status = string.IsNullOrWhiteSpace(livroViewModel.Status)
+
+              //if ternário
+              ? "Disponível"
+              : livroViewModel.Status.Trim() //Trim: remove espaços em branco antes e depois da string
+            };
+
+            //verificar se ID's existem
+            if (livroViewModel.CategoriaIds != null && livroViewModel.CategoriaIds.Any()) //se as categorias ID's é diferente de nulo e se elas tem algo
+            {
+                livro.IdCategoria = livroViewModel.CategoriaIds
+                    .Select(id => new Categorium { Id = id, Nome = string.Empty }).ToList();
+
+            }
+
+            var response = await _livroRepository.CadastrarLivroAsyc(livro);
+
+            return MapToLivroResponseDto(response);
         }
 
         public Task<bool> DeletarLivroAsync(int id)
@@ -73,7 +113,7 @@ namespace CodeBibliotec.Services
             //LivroResponseDto: livro resumido
             if (livro == null) //verificando se o livro é nulo
             {
-                return null; //se é nulo, retonar nulo
+                return null!; //se é nulo, retonar nulo
             }
             return new LivroResponseDto
             {

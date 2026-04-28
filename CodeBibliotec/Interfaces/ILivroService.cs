@@ -11,7 +11,7 @@ namespace CodeBibliotec.Interfaces
 
         //LivroViewModel:livro resumido
         //livroViewModel: aqui vira um livro completo
-        Task<Livro> CadastrarLivrosAsync(LivroViewModel livroViewModel);
+        Task<LivroResponseDto> CadastrarLivrosAsync(LivroViewModel livroViewModel);
 
 
 

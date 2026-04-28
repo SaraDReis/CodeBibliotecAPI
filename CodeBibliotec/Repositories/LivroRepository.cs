@@ -34,9 +34,38 @@ namespace CodeBibliotec.Repositories
 
         //metodos implementados
         //para implementar voce tera que criar um por um
-        public Task<bool> AtualizarLivrosAsync(int id, Livro livro)
+        public async Task<bool> AtualizarLivrosAsync(int id, Livro livro)
         {
-            throw new NotImplementedException();
+            var livroExistente = await _context.Livros
+                .Include(l => l.IdCategoria)
+                .FirstOrDefaultAsync(l => l.Id == id);
+
+            if (livroExistente == null)
+                return false;
+
+            livroExistente.Titulo = livro.Titulo;   
+            livroExistente.Autor = livro.Autor;
+            livroExistente.AnoPublicacao = livro.AnoPublicacao;
+            livroExistente.Status = livro.Status;
+
+            if (livro.IdCategoria != null) //se categorias forem diferentes de nulos
+            {
+                //pegar id's das categorias recebidas
+                var categoriaIds = livro.IdCategoria.Select(c => c.Id).ToList();
+
+                var categorias = await _context.Categoria.Where(c => categoriaIds.Contains(c.Id)).ToListAsync(); //vai no contxto categorias e pega as categorias que correspondem aos ids recebidos e colcoa em uma lista
+                
+                livroExistente.IdCategoria.Clear(); //limpa as categorias atuais do livro existente pois vamos atualizar com novas categorias
+
+                foreach (var categoria in categorias) //para cada categoria na lista de categorias
+                {
+                    livroExistente.IdCategoria.Add(categoria); //adiciona a categoria na coleção de categorias do livro existente
+                }
+            }
+
+            _context.Livros.Update(livroExistente); //atualiza livro existe depois de atualizar os campos e categorias
+            await _context.SaveChangesAsync();         //* depois de rodar o update voce tem que salvar
+            return true; //retornar true(ou false) pois é um metodo tipo bool
         }
 
 
@@ -44,22 +73,22 @@ namespace CodeBibliotec.Repositories
 
 
 
-        public async Task<Livro> CadastrarLivroAsyc(Livro Livro)
+        public async Task<Livro> CadastrarLivroAsyc(Livro livro)
         {
-            if (Livro.IdCategoria != null && Livro.IdCategoria.Any()) //o meu id categoria é diferente de nulo? e/&& se os IDs existem
+            if (livro.IdCategoria != null && livro.IdCategoria.Any()) //o meu id categoria é diferente de nulo? e/&& se os IDs existem
                                                                       //.Any()
             {
-                var categoriaIds = Livro.IdCategoria.Select(c => c.Id).ToList();
-                Livro.IdCategoria = await _context.Categoria.Where(c => categoriaIds.Contains(c.Id)).ToListAsync();
+                var categoriaIds = livro.IdCategoria.Select(c => c.Id).ToList();
+                livro.IdCategoria = await _context.Categoria.Where(c => categoriaIds.Contains(c.Id)).ToListAsync();
                 //Where(): pega categorias que correspondem a tal regra
                 //Contains: somente as que contem no banco
                 //ToListAsync(): listar apos a regra
             }
-
-            _context.Livros.Add(Livro); //adicionar a tabela de livros(apenas se if der certo)
+            //livro é minusculo, mas não esta dando certo
+                _context.Livros.Add(livro); //adiciona na tabela de livros(apenas se if der certo)/equivale a um insert
                 await _context.SaveChangesAsync(); //salva para que fique no banco
 
-                return Livro; //esse metodo retorna um livro
+                return livro; //esse metodo retorna um livro
         }
 
 

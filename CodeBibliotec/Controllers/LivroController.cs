@@ -1,5 +1,6 @@
 ﻿using CodeBibliotec.Domains;
 using CodeBibliotec.Interfaces;
+using CodeBibliotec.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,11 +21,11 @@ namespace CodeBibliotec.Controllers
         {
             _livroService = livroService;
         }
-    //operação de leitura(do banco)
+        //operação de leitura(do banco)
         [HttpGet]
         //todas(ou quase) as controllers usam essa <IActionResult>
         //ListarTodosLivros: nome do metodo que vai aparecer no swagger
-        
+
         public async Task<IActionResult> ListarTodosLivros()
         {
             //primeiro endpoint da API
@@ -39,18 +40,19 @@ namespace CodeBibliotec.Controllers
                 return Ok(livros);
                 //caso não der certo cai no catch
 
-            }catch (Exception ex) //o erro é um objeto chamado exception
+            }
+            catch (Exception ex) //o erro é um objeto chamado exception
             {
                 //(500, new { mensagem = "Erro ao listar livros" }): cria objeto com propriedade mensagem
                 return StatusCode(500, new { mensagem = "Erro ao listar livros", erro = ex.Message }); //ex: Exception
-                    //de acordo com o erro, ele passa uma mensagem ao usuario
+                                                                                                       //de acordo com o erro, ele passa uma mensagem ao usuario
             }
         }
 
         //outro metodo
         //o de busca especiifca por id(por isso no get temos o {id})
         [HttpGet("{id}")]
-        public async Task<IActionResult> ObterLivroPoriD(int id)
+        public async Task<IActionResult> ObterLivroPorId(int id)
         {
             try
             {
@@ -58,11 +60,11 @@ namespace CodeBibliotec.Controllers
                 if (livro == null)
                     //no IF quando só há UMA linha(como aqui), você pode excluir as chaves, mas só se tiver UMA linha
                     //aparentemnete esses returns são coisas diferentes, por isso não se anulam
-                
+
                     return NotFound(new { mensagem = "Livro não encontrado" });
 
                 return Ok(livro);
-                
+
 
             }
             catch (Exception ex)
@@ -74,5 +76,50 @@ namespace CodeBibliotec.Controllers
 
 
 
+        [HttpPost("cadastrar")]
+        public async Task<IActionResult> CadastrarLivro(LivroViewModel livroViewModel)
+        {
+            if (!ModelState.IsValid) //valida a parte do corpo da requsição/se model state NÃO(!) for valido
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var livro = await _livroService.CadastrarLivrosAsync(livroViewModel);
+
+                return CreatedAtAction(nameof(ObterLivroPorId), new { id = livro.Id }, livro); //retorna o livro criado, com o id e o status code 201 (Created)
+
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensagem = ex.Message }); //se der erro de argumento, retorna bad request com a mensagem do erro
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensagem = "Erro ao cadastrar o livro", erro = ex.Message });
+
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task <IActionResult> AtualizarLivro(int id, LivroViewModel livroViewModel)
+        {
+            if (!ModelState.IsValid) //verificar se o corpo da função é valido
+                return BadRequest(ModelState);
+
+            try
+            {
+
+            }
+            catch(ArgumentException ex)
+            {
+
+            }catch(Exception ex)
+            {
+
+            }
+        }
     }
 }
