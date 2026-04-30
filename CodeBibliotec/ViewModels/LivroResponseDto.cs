@@ -3,7 +3,7 @@
     public class LivroResponseDto
     {
         public int Id { get; set; }
-        //coloca interrogação?
+    
         public string Titulo { get; set; }
         public string Autor { get; set; }
         public int AnoPublicacao { get; set; }

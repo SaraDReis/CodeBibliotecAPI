@@ -20,6 +20,7 @@ namespace CodeBibliotec.Services
 
 
 
+
         public async Task<bool> AtualizarLivrosAsync(int id, LivroViewModel livroViewModel)
         {
             var livro = new Livro
@@ -41,6 +42,10 @@ namespace CodeBibliotec.Services
             }
             return await _livroRepository.AtualizarLivrosAsync(id, livro);
         }
+
+
+
+
 
         public async Task<LivroResponseDto> CadastrarLivrosAsync(LivroViewModel livroViewModel)
         {
@@ -70,9 +75,15 @@ namespace CodeBibliotec.Services
             return MapToLivroResponseDto(response);
         }
 
-        public Task<bool> DeletarLivroAsync(int id)
+
+
+
+
+
+        public async Task<bool> DeletarLivroAsync(int id)
         {
-            throw new NotImplementedException();
+          return await _livroRepository.DeletarLivroAsync(id);
+
         }
 
 
@@ -103,6 +114,13 @@ namespace CodeBibliotec.Services
 
 
 
+
+
+
+
+
+
+
         //função auxiliar
         //dentro dela estamos mapeando informações e retornando da forma que o usuario ira entender
         //ex: id = nome
@@ -117,7 +135,7 @@ namespace CodeBibliotec.Services
             }
             return new LivroResponseDto
             {
-                //colocar os parametros do livroresponse para pegar as propriedades
+                //colocar os parametros do livroresponseDto para pegar as propriedades
                 //livro(minusculo): objeto livro
                 Id = livro.Id, //propriedade Id, vindo de livro
                 Titulo = livro.Titulo,

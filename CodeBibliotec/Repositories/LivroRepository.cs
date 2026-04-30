@@ -25,6 +25,7 @@ namespace CodeBibliotec.Repositories
         //_context + ctlr + . + criar metodo contrutor
         private readonly BibliotecContext _context;
 
+     
         //esse é o metodo construtor(ele tem o mesmo nome do de cima"BibliotecContext")
         //*metodo construtor para injetar a camada de contexto no repository
         public LivroRepository(BibliotecContext context)
@@ -75,6 +76,8 @@ namespace CodeBibliotec.Repositories
 
         public async Task<Livro> CadastrarLivroAsyc(Livro livro)
         {
+
+            //validação:
             if (livro.IdCategoria != null && livro.IdCategoria.Any()) //o meu id categoria é diferente de nulo? e/&& se os IDs existem
                                                                       //.Any()
             {
@@ -85,6 +88,9 @@ namespace CodeBibliotec.Repositories
                 //ToListAsync(): listar apos a regra
             }
             //livro é minusculo, mas não esta dando certo
+
+
+            //o necessario para cadastrar:
                 _context.Livros.Add(livro); //adiciona na tabela de livros(apenas se if der certo)/equivale a um insert
                 await _context.SaveChangesAsync(); //salva para que fique no banco
 
@@ -97,9 +103,19 @@ namespace CodeBibliotec.Repositories
 
 
 
-        public Task<bool> DeletarLivroAsync(int id)
+        public async Task<bool> DeletarLivroAsync(int id)
         {
-            throw new NotImplementedException();
+            var livro = await _context.Livros.FirstOrDefaultAsync(l => l.Id == id); //localiza o livro que corresponde ao id recebido
+
+            if (livro == null)
+                return false; //se o livro for nulo, retorna falso
+
+            _context.Livros.Remove(livro); //remove o livro (é o mesmo que um delete no banco de dados)
+
+            await _context.SaveChangesAsync(); //aguarda e salva as alterações
+
+            return true; //somente apos todos os passos anteriores que retorna true, ou seja, acha o livro, remove e salva.
+
         }
 
 

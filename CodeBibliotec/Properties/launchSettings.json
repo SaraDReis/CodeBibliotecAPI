@@ -5,11 +5,14 @@
         "commandName": "Project",
         "dotnetRunMessages": true,
 
-        //aqui trocamos de false para true para conseguir abrir no browser:
+        //*a API funciona independente do swagger, mas ele facilita os testes.
+        //aqui trocamos de false para true para conseguir abrir no browser, no swagger, para testar as requisições da sua API:
         "launchBrowser": true,
 
-        //aqui nos digitamos oque nos queremos abrir no navegador o "swagger":
+        //aqui nos digitamos o que nos queremos abrir no navegador o "swagger":
         "launchUrl": "swagger",
+
+
 
         "applicationUrl": "http://localhost:5004",
         "environmentVariables": {

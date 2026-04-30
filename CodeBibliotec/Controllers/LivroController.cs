@@ -111,15 +111,52 @@ namespace CodeBibliotec.Controllers
 
             try
             {
+                //sempre que você tem um método que retorna algo, você pode criar uma variável para receber o retorno, mesmo que você não vá usar depois.
+                var resultado = await _livroService.AtualizarLivrosAsync(id, livroViewModel); //*lembrando que o atualizarLivrosAsync retorna um booleano
 
+                if (!resultado)  //se o resultado não for valido(não houver um resultado)
+                    return NotFound(new {mensagem = "Livro não encontrado"});
+
+                return Ok(new { mensagem = "Livro atualizado com sucesso" });
             }
             catch(ArgumentException ex)
             {
+                return BadRequest(new { mensagem = ex.Message }); //lembrando que ex. é um objeto da classe argument exception que tem a propriedade "Message"
 
             }catch(Exception ex)
             {
-
+                return StatusCode(500, new { mensagem = "Erro ao atualizar livro", erro = ex.Message });
             }
         }
+
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletarLivro(int id)
+        {
+            try
+            {
+                var resultado = await _livroService.DeletarLivroAsync(id);
+                if (!resultado) //se o resultado for falso(visto que esperamos que retorne um verdadeiro)
+                                //**não pode colocar resultado = null, pois o DeletarLivroAsync retorna um boleano
+                                //**você pode colcoar resultado != true, pois diferente de verdaderio é igual a false, um valor válido para uma boleana
+                    return NotFound(new { mensagem = "Livro não foi encontrado" }); //se não houver reultado, aparece isto
+
+                return Ok(new { mensagem = "Livro deletado com sucesso" }); //se der certo
+
+            }catch(Exception ex) //qualquer exeção
+            {
+                return StatusCode(500, new { mensagem = "Erro ao deletar livro", erro = ex.Message });
+            }
+
+
+
+
+
+        }
+
+
+
+
     }
 }

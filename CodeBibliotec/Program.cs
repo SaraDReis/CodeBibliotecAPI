@@ -30,7 +30,14 @@ builder.Services.AddDbContext<BibliotecContext>(options => options.UseSqlServer(
 //interface(ILivroRepository) depois camada de serviço/implementação(LivroRepository)
 builder.Services.AddScoped<ILivroRepository, LivroRepository> ();
 builder.Services.AddScoped<ILivroService, LivroService>();
+
+
+//CategoriaRepository e CategoriaService
+builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 // Add services to the container.
+
+
 
 
 //adiconando serialização para evitar erros de ciclo
