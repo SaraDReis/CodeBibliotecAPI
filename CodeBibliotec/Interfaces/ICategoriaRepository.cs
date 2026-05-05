@@ -9,6 +9,6 @@ namespace CodeBibliotec.Interfaces
 
         Task<Categorium> ObterCategoriaPorIdAsync(int id);
 
-        Task<List<Categorium>> ObterTodasAsCategoriasAsync();
+        Task<Categorium> ObterTodasAsCategoriasAsync();
     }
 }
