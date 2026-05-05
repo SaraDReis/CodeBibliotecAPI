@@ -15,9 +15,12 @@ namespace CodeBibliotec.Repositories
             _context = context;
         }
 
-        public Task<Categorium> CadastrarCategoriaAsync(Categorium categoria)
+        public async Task<Categorium> CadastrarCategoriaAsync(Categorium categoria)
         {
-            throw new NotImplementedException();
+            _context.Categoria.Add(categoria);
+            await _context.SaveChangesAsync();
+
+            return categoria;
         }
 
 
@@ -36,13 +39,10 @@ namespace CodeBibliotec.Repositories
 
         public async Task<List<Categorium>> ObterTodasAsCategoriasAsync()
         {
-            return await _context.Categoria.ToListAsync();
+          return await _context.Categoria.ToListAsync();
 
         }
 
-        Task<Categorium> ICategoriaRepository.ObterTodasAsCategoriasAsync()
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

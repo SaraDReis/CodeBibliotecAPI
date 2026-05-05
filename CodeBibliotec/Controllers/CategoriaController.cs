@@ -1,4 +1,6 @@
-﻿using CodeBibliotec.Interfaces;
+﻿using CodeBibliotec.Domains;
+using CodeBibliotec.Interfaces;
+using CodeBibliotec.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +18,8 @@ namespace CodeBibliotec.Controllers
             _categoriaService = categoriaService;
         }
 
-        [HttpGet("{id}")]
+        
+        [HttpGet("{id}", Name = "ObterCategoriaPorId")]
         public async Task<IActionResult> ObterCategoriaPorIdAsync(int id)
         {
             try
@@ -36,7 +39,49 @@ namespace CodeBibliotec.Controllers
         }
 
         [HttpGet]
-
         public async Task<IActionResult> ListarTodosAsCategorias()
+        {
+            try
+            {
+                var categorias = await _categoriaService.ObterTodasAsCategoriasAsync();
+                return Ok(categorias);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensagem = "Erro ao listar categorias", erro = ex.Message });
+            }
+        }
+
+
+
+
+        [HttpPost("cadastrar")]
+        public async Task<IActionResult> CadastrarCategoria(CategoriaViewModel categoriaViewModel)
+        {
+            if (!ModelState.IsValid) //valida corpo da requisição
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var categoria = await _categoriaService.CadastrarCategoriaAsync(categoriaViewModel);
+                return CreatedAtAction(nameof(ObterCategoriaPorIdAsync), new { id = categoria.Id }, categoria);
+
+            } catch (ArgumentException ex)
+            {
+                return BadRequest(new {mensagem = ex.Message});
+
+            } catch (Exception ex)
+            {
+                return StatusCode(500, new { mensagem = "Erro ao cadastrar categoria", erro = ex.Message });
+
+
+
+            }
+        }
+        
+
+
     }
 }

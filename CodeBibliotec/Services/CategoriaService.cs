@@ -20,9 +20,16 @@ namespace CodeBibliotec.Services
 
 
 
-        public Task<CategoriaResponseDto> CadastrarCategoriaAsync(CategoriaViewModel categoriaViewModel)
+        public async Task<CategoriaResponseDto> CadastrarCategoriaAsync(CategoriaViewModel categoriaViewModel)
         {
-            throw new NotImplementedException();
+            var categoria = new Categorium
+            {
+                Nome = categoriaViewModel.Nome
+            };
+
+
+            var response = await  _categoriaRepository.CadastrarCategoriaAsync(categoria);
+            return MapToCategoriaResponseDto(response);
         }
 
 
@@ -47,6 +54,7 @@ namespace CodeBibliotec.Services
             var categorias = await _categoriaRepository.ObterTodasAsCategoriasAsync();
 
             return categorias.Select(MapToCategoriaResponseDto).ToList();
+            //**Select só funciona se ICatagoria tiver uma List
 
 
         }
@@ -68,7 +76,11 @@ namespace CodeBibliotec.Services
             return new CategoriaResponseDto
             {
                 Id = categoria.Id,
-                Nome = categoria.Nome
+                Nome = categoria.Nome,
+                IdLivros = categoria.IdLivros?.Select(l => l.Titulo).ToList()
+
+
+
             };
         }
 
